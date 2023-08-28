@@ -5,7 +5,7 @@ def get_birthdays_per_week(users):
 
     birthdays_by_weekday = {i: [] for i in range(7)}  # Дикт для сохранения именинников по дням недели
     for user in users:
-        birthday = user["birthday"].date() # получения дня рождения юзера в формате даты(оригинальный формат datatime)
+        birthday = user["birthday"]
         birthday_day_of_week = birthday.weekday() # Находим день недели для даты рождения.
 
         if birthday_day_of_week >= 5:  # Проверка на выходной( индексы 5(сб) и 6(вс))            
