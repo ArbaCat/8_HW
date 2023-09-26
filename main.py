@@ -1,75 +1,59 @@
-from datetime import date, datetime, timedelta
-
+from datetime import datetime, timedelta, date, time
 
 def get_birthdays_per_week(users):
+    # Получаем сегодняшнюю дату 
+    today = datetime.today()
 
-    birthdays_by_weekday = {i: [] for i in range(7)}  # Дикт для сохранения именинников по дням недели
+    # Находим день недели для сегдняшней даты 
+    current_day_of_week = today.weekday()
+
+    # Определяем количество дней к следующему понедельнику
+    days_until_next_monday = (7 - current_day_of_week) % 7
+
+    # получаем дату следующего понедельника
+    time_difference = timedelta(days=days_until_next_monday)
+    next_monday = datetime.date(today + time_difference)
+
+    # Получаем дату следующего воскресенья 
+    next_sunday = next_monday + timedelta(days=6)
+
+    # Создаем список пользователей которые празднуют на этой неделе
+    users_to_greet = []
+
+    print("Next Monday:", next_monday)
+    print("Next Sunday:", next_sunday)
+
     for user in users:
-        birthday = user["birthday"]
-        birthday_day_of_week = birthday.weekday() # Находим день недели для даты рождения.
-
-        if birthday_day_of_week >= 5:  # Проверка на выходной( индексы 5(сб) и 6(вс))            
-            birthday_day_of_week = 0 # переносим день поздравления на понедельник(нулевой индекс)
-            
-    current_date = datetime.now()
-
-    week_later_date = current_date + timedelta(days=7)
-
-    birthdays_per_week = {}  #Список пользователей для поздравлений по дням
+      time_obj = time()
+      dt_next_monday = datetime.combine(next_monday, time_obj)
+      dt_next_sunday = datetime.combine(next_sunday, time_obj)
+      print("Next dtMonday:", dt_next_monday)
+      print("Next dtSunday:", dt_next_sunday)
+      print(user['birthday'])
+      if dt_next_monday <= user['birthday'].replace(year=2023) <= dt_next_sunday:
+          users_to_greet.append(user['name'])
+      print(users_to_greet)
+    print('Lets start')
+    # Принтим список пользователей по дням 
     for i in range(7):
-        birthdays_per_week[i] = []
+        day = next_monday + timedelta(days=i)
+        day_name = day.strftime('%A')
+        day_users = []
+        for user in users_to_greet:
+          user_birthday_day = user['birthday'].strftime('%A')
+          if user_birthday_day == day_name:
+            day_users.add(user['name'])
+        print(f"{day_name}: {', '.join(day_users)}")
+        if day_users:
+            print(f"{day_name}: {', '.join(day_users)}")
 
-    for user in users:  # превращаем в дататайм с пустыми значениями времени(только дата). Для совпадения типов
-        user["birthday"] = datetime(user["birthday"].year, user["birthday"].month, user["birthday"].day)
-
-    for user in users: 
-        birthday = user["birthday"]
-        name = user["name"]
-        birthday = birthday.replace(year=current_date.year) #переносим дату дня рождения на актуальный год 
-
-        birthdays_by_weekday[birthday.weekday()].append(user["name"]) # Добавляем имена к нужным дням
-        if current_date <= birthday < week_later_date: 
-            day_of_week = birthday.weekday()
-            if day_of_week >= 5:  
-                day_of_week = 0
-
-            birthdays_per_week[day_of_week].append(name)
-
-    day_names = [    # создаем список названия дней недели
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
+#сгенерированный спсок словарей на тест 
+if __name__ == "__main__":
+    users = [
+        {'name': 'Bill', 'birthday': datetime(1990, 10, 1)},
+        {'name': 'Jill', 'birthday': datetime(1985, 10, 3)},
+        {'name': 'Kim', 'birthday': datetime(1982, 10, 4)},
+        {'name': 'Jan', 'birthday': datetime(1992, 10, 3)},
     ]
 
-    for i in range(7):  # выводим результат с помощью джоинов
-        day_name = datetime(2000, 1, 3 + i).strftime('%A')  
-        if birthdays_by_weekday[i]:
-            print(f"{day_name}: {', '.join(birthdays_by_weekday[i])}")
-    for day_index, names in birthdays_per_week.items():
-        if names:
-            day_name = day_names[day_index]
-            names_str = ", ".join(names)
-            print(f"{day_name}: {names_str}")
-
-
-# Сгенерированные с помощью ГПТ 3.5 тестовые данные 
-users = [
-    {"name": "Alice_0", "birthday": datetime(1995, 3, 12)},
-    {"name": "Bob_1", "birthday": datetime(1987, 9, 18)},
-    {"name": "Carol_0", "birthday": datetime(2000, 1, 5)},
-    {"name": "David_1", "birthday": datetime(1992, 8, 21)},
-    {"name": "Eve_2", "birthday": datetime(1985, 6, 30)},
-    {"name": "Frank_1", "birthday": datetime(1998, 4, 15)},
-    {"name": "Grace_3", "birthday": datetime(1989, 7, 27)},
-    {"name": "Henry_4", "birthday": datetime(1976, 12, 9)},
-    {"name": "Ivy_4", "birthday": datetime(1982, 5, 19)},
-    {"name": "Jack_5", "birthday": datetime(1970, 11, 3)},
-]
-get_birthdays_per_week(users)
-
-if __name__ == "__main__":
     get_birthdays_per_week(users)
