@@ -32,6 +32,10 @@ def get_birthdays_per_week(users):
         day_users = []
         for user in users:
           user_birthday = user['birthday'].replace(year=2023)
+          #обрабатываем дни рождения на выходных
+          if user_birthday.weekday() in (5,6) and user['name'] not in day_users_dict['Monday']:
+            day_users_dict['Monday'].append(user['name'])
+          #проверяем находится ли др юзера на следюущей неделе 
           if dt_next_monday <= user_birthday <= dt_next_sunday and user_birthday.strftime('%A') == day_name:
             day_users_dict[day_name].append(user['name'])  
     print(day_users_dict)
